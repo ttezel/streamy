@@ -1,7 +1,6 @@
 // Module dependencies.
 
 var express = require('express')
-    , events = require('events').EventEmitter
     , fs = require('fs')
     , findit = require('findit')
     , path = require('path')
@@ -91,11 +90,11 @@ function getLibrary(sock) {
         path = path.substring(0, path.length-1);  //remove the '.'
 
         if(~app.formats.indexOf(ext)) { //make sure file format is supported
-            var pathArr = path.split('/');
-            app.songs.push({'title': pathArr[pathArr.length-1]});
-
-            var title = pathArr[pathArr.length-1];  //so we can index by title
-            app.details[title] = {'path': path, 'ext': ext};
+            var pathArr = path.split('/')
+                , songTitle = pathArr[pathArr.length-1];
+                            
+            app.songs.push({'title': songTitle});
+            app.details[songTitle] = {'path': path, 'ext': ext};
         }
     });
     finder.on('end', function() {

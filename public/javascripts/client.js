@@ -24,7 +24,6 @@ $(function() {
         },
         tagName: 'li',
         render: function() {
-            console.log('rendering ', this.model.toJSON().title);
             $(this.el).html('<span>'+this.model.toJSON().title+'</span>');
             return this;
         },

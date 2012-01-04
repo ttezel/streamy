@@ -4,7 +4,16 @@ Currently supports **mp3** and **m4a**.
 
 ###Usage:
 
+Clone the repo:
+
+	git clone git@github.com:ttezel/streamy.git
+	
+Install npm dependencies:
+
 	npm install
+	
+Run the app:
+	
 	node app.js
 
 If you go to **127.0.0.1:3000/** you will see a list of all your music files that were placed in **public/music/**. There is a song there as an example. Double click a song to stream it.

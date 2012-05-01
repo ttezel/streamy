@@ -1,5 +1,7 @@
 ##Streaming Audio with node.js
 
+`Streamy` is a streaming audio server, with a web client. You can listen to music from your browser.
+
 Currently supports **mp3** and **m4a**.
 
 ###Usage:
@@ -12,7 +14,7 @@ Install npm dependencies:
 
 	npm install
 	
-Run the app:
+Run the audio server:
 	
 	node app.js
 

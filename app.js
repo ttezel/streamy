@@ -1,10 +1,13 @@
-// Module dependencies.
+// Module dependencies
 
-var express = require('express')
-  , fs = require('fs')
-  , findit = require('findit')
+var fs = require('fs')
   , path = require('path')
-  , util = require('util');
+  , util = require('util')
+
+  , MusicLibrary = require('./musiclibrary')
+  , SocketServer = require('./socket-server')
+
+  , express = require('express')
 
 var app = module.exports = express.createServer()
   , io = require('socket.io').listen(app);
@@ -24,9 +27,9 @@ app.configure(function(){
     }
   });
 
-  //app.use(express.bodyParser());
-  //app.use(express.methodOverride());
-  //app.use(app.router);
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
   app.use(express.static(__dirname + '/public'))
 })
 
@@ -37,30 +40,6 @@ app.configure('development', function(){
 app.configure('production', function(){
   app.use(express.errorHandler())
 })
-
-app.songs = {} //for server song-lookup
-app.formats = ['.mp3', '.m4a'] //supported formats
-
-//cache music library for socket connections
-;(function () {
-  var finder = findit.find(__dirname + '/public/music')
-  // Populate music library
-  finder.on('file', function(fpath, stat) {
-    var ext = path.extname(fpath)
-    if(app.formats.indexOf(ext) !== -1) {
-      var songTitle = path.basename(fpath, ext)
-      app.songs[songTitle] = fpath;
-    }
-  })
-  //now listen for socket conn's
-  finder.on('end', function () {
-    io.sockets.on('connection', function(socket) {
-      Object.keys(app.songs).forEach(function (songName) {
-        socket.emit('song', { songName: songName })
-      })
-    })
-  })
-}).call(this)
 
 // Routes
 
@@ -74,24 +53,36 @@ app.get('/', function(req, res){
 
 //Serve streaming audio - audio src points here
 app.get('/stream/:song', function(req, res) {
-  var songPath = app.songs[req.params.song]
+  var songPath = socketServer.musicLibrary.songs[req.params.song]
 
   path.exists(songPath, function (exists) {
     if(!exists) {
       var msg = 'File ' + songPath + 'not found :\'{'
-      console.log('STREAMY:', msg)
+      console.log('\nSTREAMY:', msg)
       res.writeHead(404)
       res.end(msg)
       return
     }
 
+    //stream song to client
     fs.stat(songPath, function (err, stats) {
+      if(err) {
+        console.log('\nSTREAMY: stating error:', err)
+        res.writeHead(500)
+        return
+      }
+
       res.writeHead(200, { 'Content-Type': 'audio/mpeg', 'Content-Length': stats.size })
       var readStream = fs.createReadStream(songPath)
-      util.pump(readStream, res) //throttle song to client
+
+      util.pump(readStream, res) //pump song to client
     })
   })
 })
 
-app.listen(3000)
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env)
+var PORT = 3000
+
+app.listen(PORT)
+console.log("STREAMY: listening on port", PORT)
+
+var socketServer = new SocketServer(io)

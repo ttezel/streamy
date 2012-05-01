@@ -57,7 +57,7 @@ app.get('/stream/:song', function(req, res) {
 
   path.exists(songPath, function (exists) {
     if(!exists) {
-      var msg = 'File ' + songPath + 'not found :\'{'
+      var msg = 'File `' + songPath + '` not found'
       console.log('\nSTREAMY:', msg)
       res.writeHead(404)
       res.end(msg)
@@ -67,13 +67,10 @@ app.get('/stream/:song', function(req, res) {
     //stream song to client
     fs.stat(songPath, function (err, stats) {
       if(err) {
-        console.log('\nSTREAMY: stating error:', err)
+        console.log('\nSTREAMY: stat\'ing error:', err)
         res.writeHead(500)
         return
       }
-
-      console.log('\ntitle:', req.params.song)
-      console.log('stats', stats)
 
       res.writeHead(200, { 'Content-Type': 'audio/mpeg', 'Content-Length': stats.size })
       var readStream = fs.createReadStream(songPath)

@@ -1,3 +1,4 @@
 *.swo
 *.swp
 node_modules/
+public/

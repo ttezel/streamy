@@ -28,3 +28,5 @@ Don't want to copy/paste your entire music library into **public/music/** ? S'al
 This creates a symlink named **music_library** that points to **/home/ttezel/Desktop/MUSIC/**. Streamy will traverse your symlink and retrieve the music files, thanks to [node-findit](https://github.com/substack/node-findit).
 
 If you go to **127.0.0.1:3000/stream/SONGNAME** you can stream individual songs.
+
+![library view](http://dl.dropbox.com/u/32773572/streamy_pic1.png)

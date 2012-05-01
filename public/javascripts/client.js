@@ -68,21 +68,22 @@ $(function() {
 
   document.getElementById('socket.io').addEventListener('load', sockListener);
 
+  //  handle song synch
   //  accepts object or string
   function addSongs (songs) {
 
     function addSong (songTitle) {
-      console.log('adding song', songTitle)
       var songModel = new Song.Model({ title: songTitle })
       App.library.add(songModel)
     }
 
-    if (typeof songs === 'object') {
-      Object.keys(songs).forEach(addSong)
-    } else if(typeof songs === 'string'){
+    if(typeof songs === 'object') {
+      Object.keys(songs).forEach(function (key) { addSong(key) })
+      return
+    } else if(typeof songs === 'string') {
       addSong(songs)
     } else {
-      throw new Error('songs should be object or string')
+      throw new Error('song must be of type object or string')
     }
   }
 
@@ -96,5 +97,4 @@ $(function() {
     //populate library
     socket.on('songs:add', addSongs)
   }
-
 })

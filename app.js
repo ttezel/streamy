@@ -72,6 +72,9 @@ app.get('/stream/:song', function(req, res) {
         return
       }
 
+      console.log('\ntitle:', req.params.song)
+      console.log('stats', stats)
+
       res.writeHead(200, { 'Content-Type': 'audio/mpeg', 'Content-Length': stats.size })
       var readStream = fs.createReadStream(songPath)
 

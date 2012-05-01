@@ -9,6 +9,8 @@ var FORMATS = ['.mp3', '.m4a'] //supported formats
 module.exports = MusicLibrary
 
 //
+//  MusicLibrary: populates self#songs with name:filepath pairs
+//
 //  MusicLibrary emits these events:
 //    songs:add
 //    ready
@@ -39,8 +41,9 @@ MusicLibrary.prototype.populate = function () {
     var ext = path.extname(fpath)
     if(FORMATS.indexOf(ext) !== -1 && stat.size) {
       var songTitle = path.basename(fpath, ext)
-      self.songs[songTitle] = fpath;
-      self.emit('songs:add', { songTitle: songTitle, fpath: fpath })
+
+      self.songs[songTitle] = fpath
+      self.emit('songs:add', songTitle)
     }
   })
   finder.on('end', function () {

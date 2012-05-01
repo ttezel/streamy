@@ -17,8 +17,12 @@ Install npm dependencies:
 Run the audio server:
 	
 	node app.js
+	
+###Web Client
 
-If you go to `127.0.0.1:3000` you will see a list of all your music files that were placed in `public/music/`. There is a song there as an example. Double click a song to stream it.
+Once the audio server is running, go to `127.0.0.1:3000` in your browser.
+
+You will see a list of all your music files that were placed in `public/music/`. There is a song there as an example. Double click a song to stream it.
 
 All music files in `public/music/` will be streamable.
 

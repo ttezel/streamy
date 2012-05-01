@@ -12,6 +12,7 @@ Clone the repo:
 	
 Install npm dependencies:
 
+	cd streamy
 	npm install
 	
 Run the audio server:
@@ -22,7 +23,7 @@ Run the audio server:
 
 Once the audio server is running, go to `127.0.0.1:3000` in your browser.
 
-You will see a list of all your music files that were placed in `public/music/`. There is a song there as an example. Double click a song to stream it.
+You will see a list of all your music files that were placed in `<streamy-directory>/public/music/`. There is a song there as an example. Double click a song to stream it.
 
 All music files in `public/music/` will be streamable.
 

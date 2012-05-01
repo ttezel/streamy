@@ -1,21 +1,7 @@
-$(function() {   
-     
-  /**
-          Models
-  **/
-  window.Song = Backbone.Model.extend({});
+$(function() {
 
-  /**
-          Collections
-  **/
-  window.Library = Backbone.Collection.extend({
-    model: Song
-  });
-
-  /**
-          Views
-  **/
-  window.SongView = Backbone.View.extend({
+  //  SongView
+  var SongView = Backbone.View.extend({
     initialize: function() {
       _.bindAll(this, 'render', 'play');   //conserve 'this' object
     },
@@ -28,7 +14,8 @@ $(function() {
       return this;
     },
     play: function() {
-       $('span#now-playing').html('Playing: ' + this.model.toJSON().title);
+      console.log('playing new SONG', this.model.toJSON().title)
+      $('span#now-playing').html('Playing: ' + this.model.toJSON().title);
 
       //stream the requested song
       var player = $('audio#player')[0];
@@ -37,7 +24,17 @@ $(function() {
     }
   });
 
-  window.LibraryView = Backbone.View.extend({
+  //  SongModel
+  var SongModel = Backbone.Model.extend({})
+
+  //  Song superobject
+  var Song = {
+    Model: SongModel
+  , View: SongView
+  }
+
+  //  LibraryView
+  var LibraryView = Backbone.View.extend({
     initialize: function() {
       _.bindAll(this, 'render');
       this.collection.bind('add', this.appendItem);
@@ -58,19 +55,46 @@ $(function() {
     }
   });
 
+  //  Library Collection
+  var LibraryCollection = Backbone.Collection.extend({
+    model: Song.Model
+  });
+
+  //  Library superobject
+  var Library = {
+    Collection: LibraryCollection
+  , View: LibraryView
+  }
+
   document.getElementById('socket.io').addEventListener('load', sockListener);
+
+  //  accepts object or string
+  function addSongs (songs) {
+
+    function addSong (songTitle) {
+      console.log('adding song', songTitle)
+      var songModel = new Song.Model({ title: songTitle })
+      App.library.add(songModel)
+    }
+
+    if (typeof songs === 'object') {
+      Object.keys(songs).forEach(addSong)
+    } else if(typeof songs === 'string'){
+      addSong(songs)
+    } else {
+      throw new Error('songs should be object or string')
+    }
+  }
 
   //grab music library
   function sockListener() {
     window.App = {}
-    App.library = new Library()
-    App.libraryView = new LibraryView({ collection: App.library })
 
-    //add songs to library Collection as they come in
-    socket.on('song', function (d) {
-      var song = new Song({ title: d.songName })
-      App.library.add(song)
-    })
-    socket.emit('getMusic')
+    App.library = new Library.Collection()
+    App.libraryView = new Library.View({ collection: App.library })
+
+    //populate library
+    socket.on('songs:add', addSongs)
   }
+
 })

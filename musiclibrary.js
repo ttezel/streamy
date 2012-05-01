@@ -9,8 +9,12 @@ var FORMATS = ['.mp3', '.m4a'] //supported formats
 module.exports = MusicLibrary
 
 //
-//  opts has these optional keys
-//    #root: relative directory to serve [defaults to ./public/music]
+//  MusicLibrary emits these events:
+//    songs:add
+//    ready
+//
+//  opts has these optional keys:
+//    root: relative directory to serve [defaults to ./public/music]
 //
 function MusicLibrary (opts) {
   EventEmitter.call(this)
@@ -27,10 +31,8 @@ util.inherits(MusicLibrary, EventEmitter)
 
 MusicLibrary.prototype.populate = function () {
   var self = this
-
-  this.root = this.opts.root || path.join(__dirname, '/public/music')
-
-  finder = findit.find(this.root)
+    , root = this.opts.root || path.join(__dirname, '/public/music')
+    , finder = findit.find(root)
   
   //  cache music library for socket connections
   finder.on('file', function(fpath, stat) {

@@ -1,4 +1,4 @@
 *.swo
 *.swp
 node_modules/
-public/
+public/music/
